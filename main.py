@@ -1,5 +1,6 @@
 # DEPENDENCIES: Python 3.4, tomlkit, questionary, rich, pyfiglet
 
+from rich.align import Align
 from rich import print
 import subprocess             # run console comands
 from pathlib import Path      # ↓ (line 3)
@@ -9,7 +10,6 @@ from tomlkit import document  # create TOML 'files'
 from tomlkit import dumps     # convert output of 'document' to a string
 from tomlkit import parse     # parse TOML files
 import os
-import pyfiglet               # title text
 
 import getopt, sys            # option parser
 argumentList = sys.argv[1:]
@@ -45,7 +45,12 @@ if argHelp:
     ''')
     quit()
 
-title = pyfiglet.figlet_format("komo-launch", font="smkeyboard", justify="center")
+title = Align.center('''
+ [bold red]____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____
+||k |||o |||m |||o |||- |||l |||a |||u |||n |||c |||h ||
+||__|||__|||__|||__|||__|||__|||__|||__|||__|||__|||__||
+|/__\\|/__\\|/__\\|/__\\|/__\\|/__\\|/__\\|/__\\|/__\\|/__\\|/__\\|
+''', vertical="middle")
 
 customStyle = questionary.Style([
     ('qmark', 'fg:#eb6f92'),
@@ -93,6 +98,7 @@ def configure():
     configFile = open(home / "komo-launch.toml", "w")
     configFile.write(dumps(tomlFile))
     configFile.close()
+    print("[bold red]Setup done!")
 
 barCommand = []
 komorebiCommand = []
@@ -154,12 +160,12 @@ try:
     configFile = open(home / "komo-launch.toml")
 except:
     configFile = open(home / "komo-launch.toml", "x")
-    print("\n", f'[bold red]{title}')
+    print(title)
     configure()
     print("")
     start()
 else:
-    print("\n", f'[bold red]{title}')  
+    print(title)  
     if argConfig:
         configure()
         print("")
