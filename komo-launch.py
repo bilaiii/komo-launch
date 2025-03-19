@@ -33,7 +33,7 @@ except:
     pass
 
 if argHelp:
-    print('''[red]komo-load[/]
+    print('''[red]komo-launch[/]
 
     [red]usage:[/]
      python main.py [bright_green]--arg[/]
