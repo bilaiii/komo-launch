@@ -166,7 +166,7 @@ except:
     start()
 else:
     print(title)  
-    if argConfig:
+    if argConfig == True or os.stat(home / "komo-launch.toml").st_size == 0:
         configure()
         print("")
     start()
