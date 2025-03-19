@@ -13,9 +13,37 @@ import pyfiglet               # title text
 
 import getopt, sys            # option parser
 argumentList = sys.argv[1:]
-options = "c"
-long_options = ["config"]
+options = "chv"
+long_options = ["config", "help", "verbose"]
 arguments, values = getopt.getopt(argumentList, options, long_options)
+
+argConfig = False
+argHelp = False
+argVerbose = False
+
+try:
+    for currentArgument, currentValue in arguments:    
+        if currentArgument in ("-c", "--config"):
+            argConfig = True
+        if currentArgument in ("-h", "--help"):
+            argHelp = True
+        if currentArgument in ("-v", "--verbose"):
+            argVerbose = True
+except:
+    pass
+
+if argHelp:
+    print('''[red]komo-load[/]
+
+    [red]usage:[/]
+     python main.py [bright_green]--arg[/]
+
+    [red]arguments:[/]
+     help: [bright_green]-h[/] or [bright_green]--help[/] -> prints this message
+     verbose: [bright_green]-v[/] or [bright_green]--verbose[/] -> shows the output of run commands
+     config: [bright_green]-c[/] or [bright_green]-config[/] -> allows you to run the startup configuration
+    ''')
+    quit()
 
 title = pyfiglet.figlet_format("komo-launch", font="smkeyboard", justify="center")
 
@@ -26,66 +54,100 @@ customStyle = questionary.Style([
 
 def configure():
     global bar
-    global whkd
+    global hotkey
     global masir
 
     bar = questionary.select(
-        "what bar do you use?", 
-        choices=['YASB', 'Zebar', 'komorebi-bar'],
+        "What bar do you use?", 
+        choices=['YASB', 'komorebi-bar'],
         style=customStyle,
         qmark='🍉'
         ).ask()
-    whkd = questionary.confirm(
-        "do you use whkd?",
+    hotkey = questionary.select(
+        "What is your preffered hotkey daemon?",
+        choices=['whkd', 'ahk'],
         style=customStyle,
         qmark='🍉'
         ).ask()
     masir = questionary.confirm(
-        "do you use masir?",
+        "Do you use masir?",
         style=customStyle,
         qmark='🍉'
         ).ask()
-
+    special = questionary.confirm(
+        "Would you like to add another command?",
+        default=False,
+        style=customStyle,
+        qmark='🍉'
+        ).ask()
+    specialCommandString = questionary.text(
+        "Type the special command here:",
+        style=customStyle,
+        qmark='🍉'
+        ).skip_if(special == False, default=False).ask()
     tomlFile = document()
     tomlFile.add("bar", bar)
-    tomlFile.add("whkd", whkd)
+    tomlFile.add("hotkey", hotkey)
     tomlFile.add("masir", masir)
+    tomlFile.add("special", specialCommandString)
     configFile = open(home / "komo-launch.toml", "w")
     configFile.write(dumps(tomlFile))
     configFile.close()
 
 barCommand = []
 komorebiCommand = []
+specialCommand = []
 
 def buildCommand():
     global barCommand
     global komorebiCommand
     global ParsedFile
+    global specialCommand
     ParsedFile = parse(open(home / "komo-launch.toml").read())
     komorebiCommand = ["komorebic", "start"]
-    if ParsedFile["whkd"] == True:
+    if ParsedFile["hotkey"] == "whkd":
         komorebiCommand.append("--whkd")
+    elif ParsedFile["hotkey"] == "ahk":
+        komorebiCommand.append("--ahk")
     if ParsedFile["masir"] == True:
         komorebiCommand.append("--masir")
     if ParsedFile["bar"] == "komorebi-bar":
         komorebiCommand.append("--bar")
-    if ParsedFile["bar"] == "Zebar":
-        barCommand = ["zebar"]
     if ParsedFile["bar"] == "YASB":
         barCommand = ["yasbc", "start"]
+    if ParsedFile["special"] != False:
+        specialCommand = ParsedFile["special"].split()
 
 
 def start():
     buildCommand()
     print("Starting [bold red]Komorebi...")
-    subprocess.call(komorebiCommand, 
-    stdout=subprocess.DEVNULL,
-    stderr=subprocess.STDOUT)
-    if barCommand:
-        print(f'Starting [bold red]{ParsedFile["bar"]}...')
-        subprocess.call(barCommand, 
+    if argVerbose:
+        subprocess.call(komorebiCommand)
+        print("")
+    else:
+        subprocess.call(komorebiCommand,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.STDOUT)
+    if barCommand:
+        print(f'Starting [bold red]{ParsedFile["bar"]}...')
+    if argVerbose:
+        subprocess.call(barCommand)
+        print("")
+    else:
+        subprocess.call(barCommand,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.STDOUT)
+    if specialCommand:
+        print("Running [bold red]your command...")
+        if argVerbose:
+            subprocess.call(specialCommand, shell=True)
+            print("")
+        else:
+            subprocess.call(specialCommand, shell=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.STDOUT)
+
     print("[bold red]DONE!\n")
 
 try:
@@ -97,9 +159,8 @@ except:
     print("")
     start()
 else:
-    print("\n", f'[bold red]{title}')
-    for currentArgument, currentValue in arguments:    
-        if currentArgument in ("-c", "--config"):
-            configure()
-            print("")
+    print("\n", f'[bold red]{title}')  
+    if argConfig:
+        configure()
+        print("")
     start()
