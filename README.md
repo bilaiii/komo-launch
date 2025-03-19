@@ -16,5 +16,5 @@ A simple python script to launch komorebi and its ecosystem
 
 ## TO-DO:
 - [ ] Add support for Zebar
-- [ ] Add more arguments like "--help"
-- [ ] Build/Package the script
+- [x] Add more arguments like "--help"
+- [x] Build/Package the script
