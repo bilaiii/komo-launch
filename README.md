@@ -2,19 +2,24 @@
 A simple python script to launch komorebi and its ecosystem
 
 ## Installing:
-1. Clone the repo
-2. Install all dependencies (listed at the top of the file)
-3. run the script using\
-`$ python main.py`
+- Download the lasted release
+- Unzip the archive
+- Run komo-launch!
 
 ## Usage:
-- You can run the script regularly
-- Or run it with the "-c"/"--config" argument to configure the experience.
+- Run it normally
+- Call it from the terminal
+- Add to PATH
+- Use arguments (run `$ komo-load --help` to view the list)
 
-> [!CAUTION]
-> While there is an option for Zebar, it is unsupported
+## Building from source:
+1. Clone this repo locally
+2. install cxfreeze:
+`$ pip install --upgrade cx_Freeze`
+3. run `$ cxfreeze build`
 
 ## TO-DO:
+- [ ] Allow users to skip options
 - [ ] Add support for Zebar
 - [x] Add more arguments like "--help"
 - [x] Build/Package the script
