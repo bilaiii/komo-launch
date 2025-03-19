@@ -43,7 +43,7 @@ if argHelp:
      verbose: [bright_green]-v[/] or [bright_green]--verbose[/] -> shows the output of run commands
      config: [bright_green]-c[/] or [bright_green]-config[/] -> allows you to run the startup configuration
     ''')
-    quit()
+    sys.exit()
 
 def getProcesses():
     global proc_dict
