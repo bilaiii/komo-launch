@@ -1,7 +1,7 @@
 # komo-launch
 A simple python script to launch komorebi and its ecosystem
 
-![Demo video](assets/demo.mp4)
+https://github.com/user-attachments/assets/e7182a40-b7af-4ec8-a42d-4eb8a5443417
 
 ## Installing:
 - Download the lasted release
