@@ -45,6 +45,16 @@ if argHelp:
     ''')
     quit()
 
+def getProcesses():
+    global proc_dict
+    output = subprocess.check_output(('TASKLIST', '/FO', 'CSV')).decode()
+    # get rid of extra " and split into lines
+    output = output.replace('"', '').split('\r\n')
+    keys = output[0].split(',')
+    proc_list = [i.split(',') for i in output[1:] if i]
+    # make dict with proc names as keys and dicts with the extra nfo as values
+    proc_dict = dict((i[0], dict(zip(keys[1:], i[1:]))) for i in proc_list)
+
 title = Align.center('''
  [bold red]____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____
 ||k |||o |||m |||o |||- |||l |||a |||u |||n |||c |||h ||
@@ -169,4 +179,21 @@ else:
     if argConfig == True or os.stat(home / "komo-launch.toml").st_size == 0:
         configure()
         print("")
-    start()
+    getProcesses()
+    if 'komorebi.exe' in proc_dict:
+        if argVerbose:
+            subprocess.call(["komorebic", "stop", "--whkd", "--masir", "--ahk"])
+            print("")
+        else:
+            subprocess.call(["komorebic", "stop", "--whkd", "--masir", "--ahk"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.STDOUT)
+    if 'yasb.exe' in proc_dict:
+        if argVerbose:
+            subprocess.call(["yasbc", "reload"])
+            print("")
+        else:
+            subprocess.call(["yasbc", "reload"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.STDOUT)
+        start()
