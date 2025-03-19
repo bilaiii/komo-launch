@@ -5,7 +5,7 @@ description = "A simple komorebi loading script"
 
 [tool.cxfreeze]
 executables = [
-    "main.py",
+    "komo-launch.py",
 ]
 
 [tool.cxfreeze.build_exe]
