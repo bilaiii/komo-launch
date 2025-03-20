@@ -196,4 +196,4 @@ else:
             subprocess.call(["yasbc", "reload"],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.STDOUT)
-        start()
+    start()
