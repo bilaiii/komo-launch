@@ -45,16 +45,6 @@ if argHelp:
     ''')
     sys.exit()
 
-def getProcesses():
-    global proc_dict
-    output = subprocess.check_output(('TASKLIST', '/FO', 'CSV')).decode()
-    # get rid of extra " and split into lines
-    output = output.replace('"', '').split('\r\n')
-    keys = output[0].split(',')
-    proc_list = [i.split(',') for i in output[1:] if i]
-    # make dict with proc names as keys and dicts with the extra nfo as values
-    proc_dict = dict((i[0], dict(zip(keys[1:], i[1:]))) for i in proc_list)
-
 title = Align.center('''
  [bold red]____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____
 ||k |||o |||m |||o |||- |||l |||a |||u |||n |||c |||h ||
@@ -74,13 +64,13 @@ def configure():
 
     bar = questionary.select(
         "What bar do you use?", 
-        choices=['YASB', 'komorebi-bar'],
+        choices=['YASB', 'komorebi-bar', 'Zebar', 'None'],
         style=customStyle,
         qmark='🍉'
         ).ask()
     hotkey = questionary.select(
         "What is your preffered hotkey daemon?",
-        choices=['whkd', 'ahk'],
+        choices=['whkd', 'ahk', 'None'],
         style=customStyle,
         qmark='🍉'
         ).ask()
@@ -130,7 +120,9 @@ def buildCommand():
     if ParsedFile["bar"] == "komorebi-bar":
         komorebiCommand.append("--bar")
     if ParsedFile["bar"] == "YASB":
-        barCommand = ["yasbc", "start"]
+        barCommand = "yasb.exe"
+    if ParsedFile["bar"] == "Zebar":
+        barCommand = "zebar.exe"
     if ParsedFile["special"] != False:
         specialCommand = ParsedFile["special"].split()
 
@@ -147,13 +139,13 @@ def start():
         stderr=subprocess.STDOUT)
     if barCommand:
         print(f'Starting [bold red]{ParsedFile["bar"]}...')
-    if argVerbose:
-        subprocess.call(barCommand)
-        print("")
-    else:
-        subprocess.call(barCommand,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.STDOUT)
+        if argVerbose:
+            subprocess.Popen(barCommand)
+            print("")
+        else:
+            subprocess.Popen(barCommand,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.STDOUT)
     if specialCommand:
         print("Running [bold red]your command...")
         if argVerbose:
@@ -179,21 +171,4 @@ else:
     if argConfig == True or os.stat(home / "komo-launch.toml").st_size == 0:
         configure()
         print("")
-    getProcesses()
-    if 'komorebi.exe' in proc_dict:
-        if argVerbose:
-            subprocess.call(["komorebic", "stop", "--whkd", "--masir", "--ahk"])
-            print("")
-        else:
-            subprocess.call(["komorebic", "stop", "--whkd", "--masir", "--ahk"],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.STDOUT)
-    if 'yasb.exe' in proc_dict:
-        if argVerbose:
-            subprocess.call(["yasbc", "reload"])
-            print("")
-        else:
-            subprocess.call(["yasbc", "reload"],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.STDOUT)
     start()
