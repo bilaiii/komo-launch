@@ -21,7 +21,7 @@ https://github.com/user-attachments/assets/e7182a40-b7af-4ec8-a42d-4eb8a5443417
 3. run `$ cxfreeze build`
 
 ## TO-DO:
-- [ ] Allow users to skip options
-- [ ] Add support for Zebar
+- [x] Allow users to skip options
+- [x] Add support for Zebar
 - [x] Add more arguments like "--help"
 - [x] Build/Package the script
