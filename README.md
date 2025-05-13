@@ -12,7 +12,7 @@ https://github.com/user-attachments/assets/e7182a40-b7af-4ec8-a42d-4eb8a5443417
 - Run it normally
 - Call it from the terminal
 - Add to PATH
-- Use arguments (run `$ komo-load --help` to view the list)
+- Use arguments (run `$ komo-launch --help` to view the list)
 
 ## Building from source:
 1. Clone this repo locally
